@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="stylesheet" href="d3-context-menu.css">
+    <title>circuit.js Editor</title>
+  </head>
+  <body onload="onLoad()">
+        <main>
+            <div class = "header" id="navigationBar" name="navigationBar">
+                <div class="dropdown">
+                    <button class="dropdownButton" onclick="dropdownMenu(1)">Select Generator</button>
+                    <div class="dropdown-content" id="myDropdownLogic">
+                      <a onclick="place(new generator_sin(100,50))">Sin 100Hz</a>
+                      <a onclick="place(new generator_sin(100,50))">Sin 10kHz</a>
+                      <a onclick="place(new generator_rect(100,50))">Rect 100Hz</a>
+                      <a onclick="place(new generator_rect(100,50))">Rect 10kHz</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                  <input class="moduleButton" type="button" value="Draw circuit" onclick="place(new circuit(500,50))"/>
+              </div>
+                <input type="checkbox" id="deleteCheckbox" onchange="toggleDelete()"/>
+                <label class="moduleButton" id="deleteButton" for="deleteCheckbox">Delete</label>
+                <input class="moduleButton" type="button" value="+" onclick="zoomIn()"/>
+                <input class="moduleButton" type="button" value="-" onclick="zoomOut()"/>
+            </div>
+            <div class="space" id="space"> </div>
+            <div class="frame" id="simulationBox" name="simulationBox">
+            </div>
+            <div class="dropdown" id="navigationMenu">
+                <div class="dropdown-content" id="myDropdownMenu">
+                  <a onclick="toggleNavigationBar(true)">Show/Hide</a>
+                  <a onclick="zoomIn()">Zoom+</a>
+                  <a onclick="zoomOut()">Zoom-</a>
+                  <a onclick="about()">About</a>
+                </div>
+            </div>
+        </main>
+  </body>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="d3-context-menu.js"></script>
+  <!-- <script src="parser.js"></script> -->
+  <script src="script.js"></script> 
+  <script src="./Classes/connection.js"></script> 
+  <script src="./Classes/managers.js"></script> 
+  <script src="./Classes/modules.js"></script> 
+
+
+</html>
