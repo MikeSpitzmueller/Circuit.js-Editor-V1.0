@@ -58,6 +58,7 @@ class ModuleManager {
      */
     addModule(module) {
         this.moduleList.push(module);
+        console.log(this.moduleList);
     }
 
     /**
@@ -74,6 +75,19 @@ class ModuleManager {
     getModuleList() {
         return this.moduleList;
     }
+
+
+    /**M.S.
+     * updates the ModuleList with new frequency and amplitude of the generator
+     */
+    updateModuleList(freq, amplitude) {
+        if(this.moduleList[0].classname == "generator_sin") {
+            this.moduleList[0].frequency = freq;
+            this.moduleList[0].amplitude = amplitude;
+        }
+    }
+
+
 }
 
 /**

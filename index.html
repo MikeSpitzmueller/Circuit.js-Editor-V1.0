@@ -5,30 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheet.css">
     <link rel="stylesheet" href="d3-context-menu.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="components/overlay/overlay.js"></script>
+
     <title>circuit.js Editor</title>
   </head>
   <body onload="onLoad()">
         <main>
-            <div class = "header" id="navigationBar" name="navigationBar">
-                <div class="dropdown">
-                    <button class="dropdownButton" onclick="dropdownMenu(1)">Select Generator</button>
-                    <div class="dropdown-content" id="myDropdownLogic">
-                      <a onclick="place(new generator_sin(100,50))">Sin 100Hz</a>
-                      <a onclick="place(new generator_sin(100,50))">Sin 10kHz</a>
-                      <a onclick="place(new generator_rect(100,50))">Rect 100Hz</a>
-                      <a onclick="place(new generator_rect(100,50))">Rect 10kHz</a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                  <input class="moduleButton" type="button" value="Draw circuit" onclick="place(new circuit(500,50))"/>
+            <div id="simulation">
+              <!-- <button onclick="toggleIFrame()">Toggle iFrame</button> -->
+            <iframe id="circuitFrame" width="100%" height="500" position="relativ" src="../war/circuitjs.html?startCircuit=_highpass_ext.txt" ></iframe>  
+            <script src="simLoad.js"></script> 
+          
+              <div id="info">
+              time = 9.413<br>
+              running = false<br>
+              V(vsense) = -0.22<br>
+              ounter value = <tt>00111010</tt> = 58<br>
+              V(D0) = 0<br>
+              V(D1) = 5<br>
+              V(D2) = 0<br>
+              V(D3) = 5<br>
+              V(D4) = 5<br>
+              V(D5) = 5<br>
+              V(D6) = 0<br>
+              V(D7) = 0<br>
+              resistor 1 voltage diff = -0.22<br>
+              resistor 1 current = -0.22 mA<br>
+              resistor 2 voltage diff = 7.148<br>
+              resistor 2 current = 7.148 mA<br>
+              V(vsense) = -0.22
               </div>
+        </div>
+        <script>
+          function showSimulation() {
+            let simulationStatus = document.getElementById("simulation").style.display;
+            if(simulationStatus == "") {
+              document.getElementById("simulation").style.display = "none";
+            }
+            else {
+              document.getElementById("simulation").style.display = "";
+            }
+          }
+        </script>
+          
+          <div class = "header" id="navigationBar" name="navigationBar">
+                    <button class="moduleButton" onclick="place(new generator_sin(100,50))">Draw generator</button>
+                    <button class="moduleButton" onclick="place(new circuit(500,50))">Draw circuit</button>
+                    <button class="moduleButton" onclick="place(new oscilloscope(900,50))">Draw oscilloscope</button>
+
                 <input type="checkbox" id="deleteCheckbox" onchange="toggleDelete()"/>
                 <label class="moduleButton" id="deleteButton" for="deleteCheckbox">Delete</label>
                 <input class="moduleButton" type="button" value="+" onclick="zoomIn()"/>
                 <input class="moduleButton" type="button" value="-" onclick="zoomOut()"/>
+                <button class="moduleButton" onclick="showSimulation()">Show simulation</button>
             </div>
             <div class="space" id="space"> </div>
             <div class="frame" id="simulationBox" name="simulationBox">
+              <div class="left" id="left"></div>
+              <div class="main-content" id="main-content"></div>
             </div>
             <div class="dropdown" id="navigationMenu">
                 <div class="dropdown-content" id="myDropdownMenu">

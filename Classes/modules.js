@@ -1,4 +1,4 @@
-/** K.F./W.A.
+/** K.F./W.A. / M.S.
  * This class is the basis of every logic module. It contains the most important methods
  */
 class Module {
@@ -56,7 +56,7 @@ class Module {
         }
     }
 
-    /** K.F.
+    /** K.F. / M.S.
      * builds the module in the SVG element based on the set class variables
      * @param {String} text the text to be written in the module
      * @param {boolean} negation indicates whether a negation should be appended
@@ -236,40 +236,6 @@ class Module {
     }
 
     /** K.F.
-     * checks whether the module needs to be activated
-     * @param {boolean} activate
-     */
-    activateInactivate(activate) {
-        if (activate) {
-            this.value = true;
-            if (this.output.length > 0) {
-                for (var i = 0; i < this.output.length; i++) {
-                    this.output[i].setValue(true);
-                }
-            }
-            this.group.select("text").attr("fill", colorSelected);
-            this.group.select("rect").attr("stroke", colorSelected);
-        }
-        else {
-            this.value = false;
-            if (this.output.length > 0) {
-                for (var i = 0; i < this.output.length; i++) {
-                    this.output[i].setValue(false);
-                }
-            }
-            this.group.select("text").attr("fill", colorStandard);
-            this.group.select("rect").attr("stroke", colorStandard);
-        }
-    }
-
-    /** K.F.
-     * toggles the value and the color of the module
-     *
-    toggleActivate() {
-        return;
-    }*/
-
-    /** K.F.
      * returns the offset of the output connectionpoint
      */
     getOutputOffset() {
@@ -312,13 +278,6 @@ class Module {
         }
         thisElement.delete();
     }
-    /** W.A.
-     * changes the number of the module's inputs
-     * @param {string} classname name of the modul's subclass
-     * @param {number} x x position of module
-     * @param {number} y y position of module
-     * @param {number} inputCount new number of the module's inputs
-     */
 
     /** K.F.
      * adds an element to the output list
@@ -327,9 +286,10 @@ class Module {
     addOutput(element) {
         this.output.push(element);
     }
+    
 }
 
-/** K.F./W.A.
+/** M.S.
  * implements a Module as an circuit module
  */
 class circuit extends Module {
@@ -344,11 +304,11 @@ class circuit extends Module {
     {
         super(x, y);
 
-        this.maxInputCount = 2;                    
+        this.maxInputCount = 1;                    
         this.maxOutputCount = 1;
         this.width = 250;
         this.height = 250;
-        this.image = "./Circuits/RC_Tiefpass.png"
+        this.image = "./Circuits/CR_Hochpass.png"
 
         this.calcOutputOffset();                        
         this.calcInputOffset();                             
@@ -359,7 +319,7 @@ class circuit extends Module {
 }
 
 
-/** K.F./W.A.
+/** M.S.
  * implements a Module as an generator_rect module
  */
 class generator_rect extends Module {
@@ -386,7 +346,7 @@ class generator_rect extends Module {
 
 }
 
-/** K.F./W.A.
+/** M.S.
  * implements a Module as an generator_sin module
  */
 class generator_sin extends Module {
@@ -403,6 +363,36 @@ class generator_sin extends Module {
         this.width = 150;
         this.height = 150;
         this.image = "./Circuits/Sinus.png"
+        this.frequency = 0;
+        this.amplitude = 0;
+
+
+        this.calcOutputOffset();                        
+        this.calcInputOffset();                             
+        this.build("rect");
+        this.addsInputToArray();                            
+    }
+
+}
+
+/** M.S.
+ * implements a Module as an oscilloscope module
+ */
+class oscilloscope extends Module {
+    /**
+     * sets all variables for an oscilloscope module 
+     * @param {number} x the x position in which the module is to be set
+     * @param {number} y the y position in which the module is to be set
+     */
+    constructor(x, y) 
+    {
+        super(x, y);
+        this.maxInputCount = 1;
+        this.maxOutputCount = 0;
+        this.width = 150;
+        this.height = 150;
+        this.image = "./Circuits/oscilloscope.png"
+        
 
         this.calcOutputOffset();                        
         this.calcInputOffset();                             

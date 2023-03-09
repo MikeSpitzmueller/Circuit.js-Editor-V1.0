@@ -16,13 +16,16 @@ var widthNavBar = document.getElementById("navigationBar").clientHeight;
 var width = 100;
 var height = 90;
 
+// M.S. initialising Array with circuits
+var circuitList = ["Resistor", "Lowpass", "Highpass"];
+
 
 //#region prototype additional functions
 
 /* W.A. 
  * hide dropdown menus when loading the web page
  */
-document.getElementById("myDropdownLogic").style.display = "none";
+// document.getElementById("myDropdownLogic").style.display = "none";
 
 
 /* W.A.
@@ -66,10 +69,10 @@ Array.prototype.swap = function (x, y) {
  */
 window.onclick = function(event) {  
     if (!event.target.matches('.dropdownButton') && !event.target.matches('.dropdown-content a')){  
-        var clickLogic = document.getElementById("myDropdownLogic");   
+        // var clickLogic = document.getElementById("myDropdownLogic");   
         var clickSave = document.getElementById("myDropdownSave");   
         var clickMenu = document.getElementById("myDropdownMenu");   
-        clickLogic.style.display ="none";
+        // clickLogic.style.display ="none";
         clickMenu.style.display ="none";
     }
 }
@@ -92,7 +95,7 @@ function onLoad(){
     try {
         setWinParam();
         var initVal = (decodeURI(window.location.hash.slice(1)));
-        d3.select(".frame").append("svg").attr("id", "svg").attr("viewBox", "0 0 " + realZoom + " 100").attr("preserveAspectRatio", "xMinYMin meet");
+        d3.select(".main-content").append("svg").attr("id", "svg").attr("viewBox", "0 0 " + realZoom + " 100").attr("preserveAspectRatio", "xMinYMin meet");
     }
     catch { }
     if (typeof initVal != "undefined" || initVal != "") {
@@ -148,7 +151,7 @@ function calcZoom(){
  */
 function dropdownMenu(number, x, y){
     if(number == 1){
-        var click = document.getElementById("myDropdownLogic");
+        // var click = document.getElementById("myDropdownLogic");
     }
     else if(number == 2){
         var click = document.getElementById("myDropdownSave");
@@ -388,6 +391,36 @@ function changeModuleID(listModulesOld){
 }
 ///////// End draw logic from JSON
 
+/**M.S.
+ * replaces old circuit with new one and changes png
+ * element.replace(new circuit(element.x, element.y, element.maxInputCount), element.id);
+ */
+function replace(newModule, oldID) {
+    var thisElement = this;
+    newModule.id = oldID;
+    //inputs:
+    var i;
+        for (var j = 0; j < thisElement.input[i].length; j++) {
+            var oldConnection = thisElement.input[i][j];
+            var newConnection = new CONNECTION(oldConnection.gridPointsX, oldConnection.gridPointsY);
+            newConnection.setInput(oldConnection.input);
+            var value = false;
+            if (oldConnection.value) {
+                value = true;
+            }
+            connect(oldConnection.input, newConnection, newModule, i, value);
+    }
+    //outputs:
+        var oldConnection = thisElement.output[i];
+        var newConnection = new CONNECTION(oldConnection.gridPointsX, oldConnection.gridPointsY);
+        connect(newModule, newConnection, oldConnection.output, oldConnection.outputInputIndex, 0);
+    thisElement.delete();
+}
+
+
+
+
+
 ///////// Begin draw logic from equation
 /** K.F.
  * initiates the process of drawing the equation
@@ -531,6 +564,7 @@ function buildEquation(variables, equation, inputList, buffer) {
  * @param {Module} element the element to be placed
  */
 function place(element) {
+    // frequencySelect();
     while (isTouching(element)) {
         element.dMove(0, 20);
     }
@@ -625,6 +659,8 @@ function connect(outElement, connectionElement, inElement, inElementInputIndex, 
         connectionElement.outputID = inElement.id;
         connectionElement.setOutputInputIndex(inElementInputIndex);
         connectionElement.moveEnd(inElement.getX() + inElement.getInputOffset(inElementInputIndex)[0], inElement.getY() + inElement.getInputOffset(inElementInputIndex)[1]);
+        // console.log(inElement);
+        // console.log(outElement);
         return true;
     }
     catch (x) {
@@ -633,120 +669,85 @@ function connect(outElement, connectionElement, inElement, inElementInputIndex, 
     }
 }
 
-/** K.F.
+/** K.F. / M.S.
  * creates a context menu
  * @param {Module} element element that triggered the context menu
  */
 function menuLogic(element) {
     //describing the context menu
+    if(element.classname == "generator_sin") {
     var menu =
         [
             {
-                title: "replace...",
-                children:
-                    [
-                        {
-                            title: "INPUT",
-                            action: function () {
-                                element.replace(new INPUT(element.x, element.y), element.id);
-                            },
-                        },
-                        {
-                            title: "AND",
-                            action: function () {
-                                element.replace(new AND(element.x, element.y, element.maxInputCount), element.id);
-                            },
-                        },
-                        {
-                            title: "circuit",
-                            action: function () {
-                                element.replace(new circuit(element.x, element.y, element.maxInputCount), element.id);
-                            },
-                        },
-                        {
-                            title: "OR",
-                            action: function () {
-                                element.replace(new OR(element.x, element.y, element.maxInputCount), element.id);
-                            },
-                        },
-                        {
-                            title: "generator_rect",
-                            action: function () {
-                                element.replace(new generator_rect(element.x, element.y, element.maxInputCount), element.id);
-                            },
-                        },
-                        {
-                            title: "generator_sin",
-                            action: function () {
-                                element.replace(new generator_sin(element.x, element.y), element.id);
-                            },
-                        },
-                        {
-                            title: "OUTPUT",
-                            action: function () {
-                                element.replace(new OUTPUT(element.x, element.y), element.id);
-                            },
-                        },
-                    ],
+                title: "properties",
+                action: function () {
+                    let overlay = new Overlay();
+                    console.log(document.querySelector('#left'));
+                    overlay.render(document.querySelector('#left'));
+                    overlay.show([["number","Frequency",100,0,10000],["number","Amplitude",1,0,10]]);
+                }
             },
-            {
-                title: "change input number",               // W.A.
-                children:
-                    [
-                        {
-                            title: "2",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 2, element.id);
-                            },
-                        },
-                        {
-                            title: "3",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 3, element.id);
-                            },
-                        },
-                        {
-                            title: "4",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 4, element.id);
-                            },
-                        },
-                        {
-                            title: "5",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 5, element.id);
-                            },
-                        },
-                        {
-                            title: "6",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 6, element.id);
-                            },
-                        },
-                        {
-                            title: "7",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 7, element.id);
-                            },
-                        },
-                        {
-                            title: "8",
-                            action: function () {
-                                element.changeInputNumber(element.constructor.name, element.x, element.y, 8, element.id);
-                            },
-                        },
-                    ],
-            },
+
             {
                 divider: true,
             },
             {
                 title: 'delete',
                 action: function () {
+                    console.log(element);
                     element.delete();
                 }
             }
-        ];
+        ];}
+
+        else if(element.classname == "circuit") {
+            var menu =
+        [
+            {
+                title: "set circuit",
+                action: function () {
+                    let overlay = new Overlay();
+                    console.log(document.querySelector('#left'));
+                    overlay.render(document.querySelector('#left'));
+                    overlay.show([["select","circuit",circuitList]]);
+                }
+            },
+            
+
+            {
+                divider: true,
+            },
+            {
+                title: 'delete',
+                action: function () {
+                    console.log(element);
+                    element.delete();
+                }
+            }
+        ];}
+
+        else if(element.classname == "oscilloscope") {
+            var menu =
+        [
+            {
+                title: "open oscilloscope",
+                action: function () {
+                }
+            },
+            
+
+            {
+                divider: true,
+            },
+            {
+                title: 'delete',
+                action: function () {
+                    console.log(element);
+                    element.delete();
+                }
+            }
+        ];}
+        
     //open the context menu
     d3.contextMenu(menu)();
 }

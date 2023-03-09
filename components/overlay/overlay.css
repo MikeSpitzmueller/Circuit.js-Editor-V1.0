@@ -1,0 +1,95 @@
+.transition{
+    transition: width 0.5s ease-in-out,opacity 0.5s ease-in-out;
+}
+
+.overlay{
+    height:50%;
+    width:0%;
+    opacity: 0;
+
+    background-color: transparent;
+    border: 2px solid black;
+
+    z-index: 9999;
+    border-radius: 2%;
+    
+    position: relative;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.overlay.visible{
+    width:100%;
+    opacity: 1;
+}
+
+.form-content{
+    width:0%;
+    position: relative;
+}
+
+.form-content.visible{
+    width:80%;
+}
+
+.inputBlock{
+    margin-top: 10%;
+    width:0%;
+    opacity: 0;
+
+    padding:0;
+}
+
+.inputBlock.visible{
+    width:100%;
+    opacity: 1;
+}
+
+/** Input for frequency and amplitude */
+.input{
+    padding:0;
+    width:100%;
+}
+
+/** list for selection of circuit*/
+.select{
+    padding:0;
+    width:100%;
+}
+
+/*
+.input.visible{
+    width:100%;
+    opacity: 1;
+}
+
+.label{
+    width:0%;
+    opacity: 0;
+}
+
+.label.visible{
+    width:100%;
+    opacity: 1;
+} */
+
+
+#confirmBtn{
+    position: absolute;
+    width:0%;
+    opacity: 0;
+    height:5%;
+    bottom: 2%;
+
+    margin-left: 5%;
+    margin-right: 5%;
+
+    border-radius: 7%;
+}
+
+#confirmBtn.visible{
+    width:90%;
+    opacity: 1;
+}
+
